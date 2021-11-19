@@ -1,6 +1,7 @@
 # Changelog
 
-
+## 5.1.0
+- feat: Added support for providing custom ToggleFetcher through a UnleashToggleFetcherFactory (A Function<UnleashConfig, ToggleFetcher>). Two fetchers are now included, one using java.net.http and one using OkHttp, if you want to use the OkHttp one, your project will need to add a dependency on ```<dependency><groupId>com.squareup.okhttp3</groupId><artifactId>okhttp</artifactId><version>4.9+</version></dependency>```
 ## 5.0.0
 - chore: Refactor package names. Moving from `no.finn.unleash` to `io.getunleash` to reflect where development is taking place.
 
