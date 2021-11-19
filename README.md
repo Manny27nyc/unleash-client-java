@@ -219,7 +219,8 @@ UnleashConfig config = UnleashConfig.builder()
 ### Toggle fetcher
 The Unleash Java client now supports using your own toggle fetcher.
 The Config builder has been expanded to accept a `io.getunleash.util.UnleashToggleFetcherFactory` which should be a `Function<UnleashConfig, ToggleFetcher>`.
-So if you want to use OkHttp instead of HttpURLConnection you'll need a dependency on okhttp
+If you want to use OkHttp instead of HttpURLConnection you'll need a dependency on okhttp
+
 ```xml
 <dependency>
     <groupId>com.squareup.okhttp3</groupId>
@@ -227,6 +228,7 @@ So if you want to use OkHttp instead of HttpURLConnection you'll need a dependen
     <version>4.9+</version>
 </dependency>
 ```
+
 Then you can change your config to
 ```java
 UnleashConfig config = UnleashConfig.builder()
