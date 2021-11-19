@@ -34,61 +34,71 @@ public class OkHttpToggleFetcher implements ToggleFetcher {
             tempDir = Files.createTempDirectory("http_cache").toFile();
         } catch (IOException ignored) {
         }
-
         OkHttpClient.Builder builder =
                 new OkHttpClient.Builder()
                         .connectTimeout(Duration.ofSeconds(10))
-                        .callTimeout(Duration.ofSeconds(5));
+                        .callTimeout(Duration.ofSeconds(5))
+                        .followRedirects(true);
         if (tempDir != null) {
             builder = builder.cache(new Cache(tempDir, 1024 * 1024 * 50));
         }
         if (unleashConfig.getProxy() != null) {
             builder = builder.proxy(unleashConfig.getProxy());
         }
-        this.client =
-                builder.followRedirects(true)
-                        .addInterceptor(
-                                (c) -> {
-                                    Request.Builder headers =
-                                            c.request()
-                                                    .newBuilder()
-                                                    .addHeader("Content-Type", "application/json")
-                                                    .addHeader("Accept", "application/json")
-                                                    .addHeader(
-                                                            UNLEASH_APP_NAME_HEADER,
-                                                            unleashConfig.getAppName())
-                                                    .addHeader(
-                                                            UNLEASH_INSTANCE_ID_HEADER,
-                                                            unleashConfig.getInstanceId())
-                                                    .addHeader(
-                                                            "User-Agent",
-                                                            unleashConfig.getAppName());
-                                    for (Map.Entry<String, String> headerEntry :
-                                            unleashConfig.getCustomHttpHeaders().entrySet()) {
-                                        headers =
-                                                headers.addHeader(
-                                                        headerEntry.getKey(),
-                                                        headerEntry.getValue());
-                                    }
-                                    for (Map.Entry<String, String> headerEntry :
-                                            unleashConfig
-                                                    .getCustomHttpHeadersProvider()
-                                                    .getCustomHeaders()
-                                                    .entrySet()) {
-                                        headers =
-                                                headers.addHeader(
-                                                        headerEntry.getKey(),
-                                                        headerEntry.getValue());
-                                    }
-                                    return c.proceed(headers.build());
-                                })
-                        .build();
+
         this.unleashConfig = unleashConfig;
         this.toggleUrl =
                 unleashConfig
                         .getUnleashURLs()
                         .getFetchTogglesHttpUrl(
                                 unleashConfig.getProjectName(), unleashConfig.getNamePrefix());
+        this.client = configureInterceptor(unleashConfig, builder.build());
+    }
+
+    public OkHttpToggleFetcher(UnleashConfig unleashConfig, OkHttpClient client) {
+        this.client = configureInterceptor(unleashConfig, client);
+        this.unleashConfig = unleashConfig;
+        this.toggleUrl =
+                unleashConfig
+                        .getUnleashURLs()
+                        .getFetchTogglesHttpUrl(
+                                unleashConfig.getProjectName(), unleashConfig.getNamePrefix());
+    }
+
+    public OkHttpClient configureInterceptor(UnleashConfig config, OkHttpClient client) {
+        return client.newBuilder()
+                .addInterceptor(
+                        (c) -> {
+                            Request.Builder headers =
+                                    c.request()
+                                            .newBuilder()
+                                            .addHeader("Content-Type", "application/json")
+                                            .addHeader("Accept", "application/json")
+                                            .addHeader(
+                                                    UNLEASH_APP_NAME_HEADER,
+                                                    unleashConfig.getAppName())
+                                            .addHeader(
+                                                    UNLEASH_INSTANCE_ID_HEADER,
+                                                    unleashConfig.getInstanceId())
+                                            .addHeader("User-Agent", unleashConfig.getAppName());
+                            for (Map.Entry<String, String> headerEntry :
+                                    unleashConfig.getCustomHttpHeaders().entrySet()) {
+                                headers =
+                                        headers.addHeader(
+                                                headerEntry.getKey(), headerEntry.getValue());
+                            }
+                            for (Map.Entry<String, String> headerEntry :
+                                    unleashConfig
+                                            .getCustomHttpHeadersProvider()
+                                            .getCustomHeaders()
+                                            .entrySet()) {
+                                headers =
+                                        headers.addHeader(
+                                                headerEntry.getKey(), headerEntry.getValue());
+                            }
+                            return c.proceed(headers.build());
+                        })
+                .build();
     }
 
     @Override

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>io.getunleash</groupId>
     <artifactId>unleash-client-java</artifactId>
@@ -12,7 +13,7 @@
         <version.okhttp>4.9.2</version.okhttp>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <version.unleash.specification>4.0.0</version.unleash.specification>
-        <arguments />
+        <arguments/>
     </properties>
 
     <name>io.getunleash:unleash-client-java</name>
@@ -60,9 +61,10 @@
             <version>2.8.9</version>
         </dependency>
         <dependency>
-          <groupId>com.squareup.okhttp3</groupId>
-          <artifactId>okhttp</artifactId>
-          <version>${version.okhttp}</version>
+            <groupId>com.squareup.okhttp3</groupId>
+            <artifactId>okhttp</artifactId>
+            <version>${version.okhttp}</version>
+            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -309,8 +311,8 @@
                                 <include>*.md</include>
                                 <include>.gitignore</include>
                             </includes>
-                            <trimTrailingWhitespace />
-                            <endWithNewline />
+                            <trimTrailingWhitespace/>
+                            <endWithNewline/>
                             <indent>
                                 <spaces>true</spaces>
                                 <tabs>false</tabs>
@@ -319,8 +321,8 @@
                         </format>
                     </formats>
                     <java>
-                        <removeUnusedImports />
-                        <toggleOffOn />
+                        <removeUnusedImports/>
+                        <toggleOffOn/>
                         <googleJavaFormat>
                             <style>AOSP</style>
                         </googleJavaFormat>
@@ -354,7 +356,8 @@
                 <activeByDefault>false</activeByDefault>
             </activation>
             <properties>
-                <sonatypeOssDistMgmtSnapshotsUrl>https://s01.oss.sonatype.org/content/repositories/snapshots</sonatypeOssDistMgmtSnapshotsUrl>
+                <sonatypeOssDistMgmtSnapshotsUrl>https://s01.oss.sonatype.org/content/repositories/snapshots
+                </sonatypeOssDistMgmtSnapshotsUrl>
             </properties>
             <repositories>
                 <repository>

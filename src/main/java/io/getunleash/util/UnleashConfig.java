@@ -8,6 +8,7 @@ import io.getunleash.UnleashContextProvider;
 import io.getunleash.event.NoOpSubscriber;
 import io.getunleash.event.UnleashSubscriber;
 import io.getunleash.lang.Nullable;
+import io.getunleash.repository.HttpToggleFetcher;
 import io.getunleash.repository.ToggleBootstrapProvider;
 import io.getunleash.strategy.Strategy;
 import java.io.File;
@@ -36,7 +37,7 @@ public class UnleashConfig {
     private final long sendMetricsInterval;
     private final boolean disableMetrics;
     private final boolean isProxyAuthenticationByJvmProperties;
-    private final boolean useOkHttpClient;
+    private final UnleashToggleFetcherFactory unleashToggleFetcherFactory;
     private final UnleashContextProvider contextProvider;
     private final boolean synchronousFetchOnInitialisation;
     private final UnleashScheduledExecutor unleashScheduledExecutor;
@@ -62,7 +63,7 @@ public class UnleashConfig {
             UnleashContextProvider contextProvider,
             boolean isProxyAuthenticationByJvmProperties,
             boolean synchronousFetchOnInitialisation,
-            boolean useOkHttpClient,
+            UnleashToggleFetcherFactory unleashToggleFetcherFactory,
             @Nullable UnleashScheduledExecutor unleashScheduledExecutor,
             @Nullable UnleashSubscriber unleashSubscriber,
             @Nullable Strategy fallbackStrategy,
@@ -123,7 +124,7 @@ public class UnleashConfig {
         this.unleashSubscriber = unleashSubscriber;
         this.toggleBootstrapProvider = unleashBootstrapProvider;
         this.proxy = proxy;
-        this.useOkHttpClient = useOkHttpClient;
+        this.unleashToggleFetcherFactory = unleashToggleFetcherFactory;
     }
 
     public static Builder builder() {
@@ -236,8 +237,8 @@ public class UnleashConfig {
         return proxy;
     }
 
-    public boolean isUseOkHttpClient() {
-        return this.useOkHttpClient;
+    public UnleashToggleFetcherFactory unleashToggleFetcherFactory() {
+        return this.unleashToggleFetcherFactory;
     }
 
     static class SystemProxyAuthenticator extends Authenticator {
@@ -309,7 +310,7 @@ public class UnleashConfig {
         private long fetchTogglesInterval = 10;
         private long sendMetricsInterval = 60;
         private boolean disableMetrics = false;
-        private boolean useOkHttpClient = false;
+        private UnleashToggleFetcherFactory unleashToggleFetcherFactory = HttpToggleFetcher::new;
         private UnleashContextProvider contextProvider =
                 UnleashContextProvider.getDefaultProvider();
         private boolean synchronousFetchOnInitialisation = false;
@@ -381,13 +382,9 @@ public class UnleashConfig {
             return this;
         }
 
-        public Builder useOkHttpClient() {
-            this.useOkHttpClient = true;
-            return this;
-        }
-
-        public Builder useOkHttpClient(boolean use) {
-            this.useOkHttpClient = use;
+        public Builder unleashToggleFetcherFactory(
+                UnleashToggleFetcherFactory toggleFetcherFactory) {
+            this.unleashToggleFetcherFactory = toggleFetcherFactory;
             return this;
         }
 
@@ -490,7 +487,7 @@ public class UnleashConfig {
                     contextProvider,
                     isProxyAuthenticationByJvmProperties,
                     synchronousFetchOnInitialisation,
-                    useOkHttpClient,
+                    unleashToggleFetcherFactory,
                     Optional.ofNullable(scheduledExecutor)
                             .orElseGet(UnleashScheduledExecutorImpl::getInstance),
                     Optional.ofNullable(unleashSubscriber).orElseGet(NoOpSubscriber::new),

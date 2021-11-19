@@ -296,23 +296,6 @@ public class OkHttpToggleFetcherTest {
     }
 
     @Test
-    public void should_notify_location_on_error() throws URISyntaxException {
-        stubFor(
-                get(urlEqualTo("/api/client/features"))
-                        .withHeader("Accept", equalTo("application/json"))
-                        .willReturn(
-                                aResponse()
-                                        .withStatus(308)
-                                        .withHeader("Location", "https://unleash.com")));
-
-        URI uri = new URI("http://localhost:" + serverMock.port() + "/api/");
-        UnleashConfig config = UnleashConfig.builder().appName("test").unleashAPI(uri).build();
-        OkHttpToggleFetcher okHttpToggleFetcher = new OkHttpToggleFetcher(config);
-        FeatureToggleResponse response = okHttpToggleFetcher.fetchToggles();
-        assertThat(response.getLocation()).isEqualTo("https://unleash.com/");
-    }
-
-    @Test
     public void should_add_project_filter_to_toggles_url_if_config_has_it_set()
             throws URISyntaxException {
         stubFor(
