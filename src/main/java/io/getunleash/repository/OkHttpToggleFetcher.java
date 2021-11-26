@@ -11,6 +11,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.time.Duration;
 import java.util.Map;
+import java.util.Objects;
+
 import okhttp3.Cache;
 import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
@@ -48,10 +50,8 @@ public class OkHttpToggleFetcher implements ToggleFetcher {
 
         this.unleashConfig = unleashConfig;
         this.toggleUrl =
-                unleashConfig
-                        .getUnleashURLs()
-                        .getFetchTogglesHttpUrl(
-                                unleashConfig.getProjectName(), unleashConfig.getNamePrefix());
+            Objects.requireNonNull(HttpUrl.get(unleashConfig.getUnleashURLs()
+                .getFetchTogglesURL(unleashConfig.getProjectName(), unleashConfig.getNamePrefix())));
         this.client = configureInterceptor(unleashConfig, builder.build());
     }
 
@@ -59,10 +59,8 @@ public class OkHttpToggleFetcher implements ToggleFetcher {
         this.client = configureInterceptor(unleashConfig, client);
         this.unleashConfig = unleashConfig;
         this.toggleUrl =
-                unleashConfig
-                        .getUnleashURLs()
-                        .getFetchTogglesHttpUrl(
-                                unleashConfig.getProjectName(), unleashConfig.getNamePrefix());
+            Objects.requireNonNull(HttpUrl.get(unleashConfig.getUnleashURLs()
+                .getFetchTogglesURL(unleashConfig.getProjectName(), unleashConfig.getNamePrefix())));
     }
 
     public OkHttpClient configureInterceptor(UnleashConfig config, OkHttpClient client) {
